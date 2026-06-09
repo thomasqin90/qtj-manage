@@ -58,13 +58,13 @@ public class SysPermission implements Serializable {
     @TableField
     private Integer status;
 
-    @TableField("is_deleted")
-    @TableLogic
-    private Integer isDeleted;
-
     @TableField("create_time")
     private Date createTime;
 
     @TableField("update_time")
     private Date updateTime;
+
+    @TableField("is_deleted")
+    @TableLogic
+    private Integer isDeleted;
 }

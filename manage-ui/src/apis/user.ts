@@ -12,6 +12,11 @@ export function getUserList(page: Page) {
   });
 }
 
+export function getUserDetail(id: string) {
+  const url = buildApiUrl(`/user/${id}`);
+  return request.get(url);
+}
+
 export function addUser(user: User) {
     const url = buildApiUrl("/user");
     return request.post(url, user);

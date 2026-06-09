@@ -21,7 +21,7 @@ const router = createRouter({
         {
           path: 'user',
           name: 'user',
-          component: () => import("@/views/UserManageView.vue")
+          component: () => import("@/views/userManage/index.vue")
         }
       ]
     },

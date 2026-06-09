@@ -8,7 +8,6 @@ const request = axios.create({
 // 请求拦截器：添加token、检查权限等
 request.interceptors.request.use(
   (request) => {
-
     return request;
   },
   (error) => {

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class SysRoleVO implements Serializable {
@@ -20,4 +21,6 @@ public class SysRoleVO implements Serializable {
     private String description;
 
     private Integer status;
+
+    private List<SysPermissionVO> permissionList;
 }

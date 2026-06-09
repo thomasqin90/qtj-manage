@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.qtj.manageserver.dto.SysUserDTO;
 import com.qtj.manageserver.dto.SysUserSaveDTO;
 import com.qtj.manageserver.entity.SysUser;
 import com.qtj.manageserver.entity.SysUserRole;
@@ -25,22 +26,22 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private final SysUserMapper userMapper;
 
     private final SysUserRoleMapper userRoleMapper;
-
+    // 构造函数中传入依赖
     public SysUserServiceImpl(SysUserMapper userMapper, SysUserRoleMapper userRoleMapper) {
         this.userMapper = userMapper;
         this.userRoleMapper = userRoleMapper;
     }
 
     @Override
-    public IPage<SysUserVO> getUserWithRolePage(Page<SysUserVO> page, QueryWrapper<SysUser> queryWrapper) {
+    public IPage<SysUserDTO> getUserWithRolePage(Page<SysUserDTO> page, QueryWrapper<SysUser> queryWrapper) {
         return userMapper.selectUserWithRole(page, queryWrapper);
     }
 
     @Override
-    public SysUserVO getUserWithRole(Long id) {
+    public SysUserDTO getUserWithRole(Long id) {
         return userMapper.getUserDetail(id);
     }
-
+    // 新增用户，包含角色
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean insertUserWithRole(SysUserSaveDTO sysUserSaveDTO) {
@@ -60,7 +61,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         return true;
     }
-
+    // 更新用户，包含角色
     @Override
     @Transactional(rollbackFor = Exception.class)
     public boolean updateUserWithRole(SysUserSaveDTO sysUserSaveDTO) {
@@ -68,14 +69,17 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         BeanUtils.copyProperties(sysUserSaveDTO, sysUser);
         // 更新主表
         userMapper.updateById(sysUser);
-        // 刷新关联表
+        // 先删除用户-角色关系
         QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", sysUserSaveDTO.getId());
         userRoleMapper.delete(queryWrapper);
+        // 再插入用户-角色关系
         if(sysUserSaveDTO.getRoleIdList() != null && !sysUserSaveDTO.getRoleIdList().isEmpty()) {
             List<SysUserRole> userRoleList = new ArrayList<>();
             for (Long roleId : sysUserSaveDTO.getRoleIdList()) {
                 SysUserRole userRole = new SysUserRole();
+                userRole.setUserId(sysUserSaveDTO.getId());
+                userRole.setRoleId(roleId);
                 userRoleList.add(userRole);
             }
             userRoleMapper.insert(userRoleList);

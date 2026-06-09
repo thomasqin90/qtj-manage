@@ -8,10 +8,14 @@ import com.qtj.manageserver.common.Result;
 import com.qtj.manageserver.dto.PageDTO;
 import com.qtj.manageserver.entity.SysRole;
 import com.qtj.manageserver.service.SysRoleService;
+import com.qtj.manageserver.vo.SysRoleVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/role")
@@ -20,12 +24,23 @@ public class SysRoleController {
 
     private final SysRoleService sysRoleService;
 
-    @GetMapping("/list")
-    public Result<IPage<SysRole>> list(PageDTO pageDto, SysRole role) {
+    @GetMapping("/page")
+    public Result<IPage<SysRole>> page(PageDTO pageDto, SysRole role) {
         Page<SysRole> page = Page.of(pageDto.getPageNum(), pageDto.getPageSize());
         QueryWrapper<SysRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.like(StrUtil.isNotBlank(role.getRoleName()), "role_name", role.getRoleName());
         IPage<SysRole> res = sysRoleService.page(page, queryWrapper);
+        return Result.success(res);
+    }
+
+    @GetMapping("/list")
+    public Result<List<SysRoleVO>> list() {
+        List<SysRole> roleList = sysRoleService.list();
+        List<SysRoleVO> res = roleList.stream().map((sysRole)->{
+            SysRoleVO roleVO = new SysRoleVO();
+            BeanUtils.copyProperties(sysRole, roleVO);
+            return roleVO;
+        }).toList();
         return Result.success(res);
     }
 
@@ -53,10 +68,10 @@ public class SysRoleController {
         boolean res = sysRoleService.removeByIds(Arrays.asList(ids));
         return Result.success(res);
     }
-
+// 角色关联权限
     @PostMapping("/assign")
-    public Result<Boolean> assign(@RequestBody SysRole role) {
-        boolean res = sysRoleService.assignPermissions(role.getId(), role.getPermissionIds());
+    public Result<Boolean> assign(Long roleID, Long[] permissions) {
+        boolean res = sysRoleService.assignPermissions(roleID, Arrays.asList(permissions));
         return Result.success(res);
     }
 }

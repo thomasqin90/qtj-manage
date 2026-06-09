@@ -15,6 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 把虚拟上传接口映射到本地目录
         registry.addResourceHandler(virtualDir + "**").addResourceLocations("file:" + localDir);
     }
 }

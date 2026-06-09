@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.qtj.manageserver.dto.SysUserDTO;
 import com.qtj.manageserver.entity.SysUser;
 import com.qtj.manageserver.vo.SysUserVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,7 +19,12 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      * @param qw 查询条件
      * @return
      */
-    IPage<SysUserVO> selectUserWithRole(Page<SysUserVO> page, @Param("ew") QueryWrapper<SysUser> qw);
+    IPage<SysUserDTO> selectUserWithRole(Page<SysUserDTO> page, @Param("ew") QueryWrapper<SysUser> qw);
 
-    SysUserVO getUserDetail(Long id);
+    /**
+     * 查询用户详情
+     * @param id
+     * @return
+     */
+    SysUserDTO getUserDetail(Long id);
 }

@@ -1,6 +1,5 @@
-package com.qtj.manageserver.vo;
+package com.qtj.manageserver.dto;
 
-import com.qtj.manageserver.entity.SysRole;
 import lombok.Data;
 
 import java.io.Serial;
@@ -9,10 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class SysUserVO implements Serializable {
+public class SysUserDTO implements Serializable {
 
     @Serial
-    private static final long serialVersionUID = -3329067027884444830L;
+    private static final long serialVersionUID = -5525767691501536826L;
 
     private Long id;
 
@@ -32,5 +31,5 @@ public class SysUserVO implements Serializable {
 
     private Date updateTime;
 
-    private List<SysRoleVO> roleList;
+    private List<SysRoleDTO> roleList;
 }

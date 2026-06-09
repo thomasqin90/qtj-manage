@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qtj.manageserver.dto.SysUserDTO;
 import com.qtj.manageserver.dto.SysUserSaveDTO;
 import com.qtj.manageserver.entity.SysUser;
 import com.qtj.manageserver.vo.SysUserVO;
@@ -16,14 +17,14 @@ public interface SysUserService extends IService<SysUser> {
      * @param queryWrapper
      * @return
      */
-    IPage<SysUserVO> getUserWithRolePage(Page<SysUserVO> page, QueryWrapper<SysUser> queryWrapper);
+    IPage<SysUserDTO> getUserWithRolePage(Page<SysUserDTO> page, QueryWrapper<SysUser> queryWrapper);
 
     /**
      * 获取用户详情
      * @param id
      * @return
      */
-    SysUserVO getUserWithRole(Long id);
+    SysUserDTO getUserWithRole(Long id);
 
     /**
      * 插入用户，并建立角色关联

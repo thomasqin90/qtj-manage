@@ -27,16 +27,16 @@ public class SysUser implements Serializable {
     private String email;
 
     private String phone;
-
+    // 0=禁用；1=启用
     private Integer status;
-
-    @TableField("is_deleted")
-    @TableLogic
-    private Integer isDeleted;
 
     @TableField("create_time")
     private Date createTime;
 
     @TableField("update_time")
     private Date updateTime;
+
+    @TableField("is_deleted")
+    @TableLogic
+    private Integer isDeleted;
 }

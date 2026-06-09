@@ -4,7 +4,7 @@
 
 <mapper namespace="com.qtj.manageserver.mapper.SysUserMapper">
     <!-- 一对多结果映射 -->
-    <resultMap id="UserRoleMap" type="com.qtj.manageserver.vo.SysUserVO">
+    <resultMap id="UserRoleMap" type="com.qtj.manageserver.dto.SysUserDTO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
@@ -16,7 +16,7 @@
         <result column="update_time" property="updateTime"/>
 
         <!-- 一对多：角色列表 -->
-        <collection property="roleList" ofType="com.qtj.manageserver.vo.">
+        <collection property="roleList" ofType="com.qtj.manageserver.dto.SysRoleDTO">
             <id column="role_id" property="id"/>
             <result column="role_name" property="roleName"/>
             <result column="role_code" property="roleCode"/>
@@ -24,7 +24,8 @@
             <result column="role_status" property="status"/>
         </collection>
     </resultMap>
-    <select id="selectUserWithRole" resultType="UserRoleMap">
+    <!--  查询用户列表  -->
+    <select id="selectUserWithRole" resultMap="UserRoleMap">
         SELECT
             u.*,
             r.id          AS role_id,
@@ -35,9 +36,9 @@
         FROM sys_user u
         LEFT JOIN sys_user_role ur ON u.id = ur.user_id
         LEFT JOIN sys_role r ON ur.role_id = r.id
-        ${ew.customSqlSegment}  <!-- 自动拼接 QueryWrapper 条件 -->
+        ${ew.customSqlSegment}
     </select>
-    <!--    -->
+    <!--  查询用户详情  -->
     <select id="getUserDetail" resultMap="UserRoleMap">
         SELECT
             u.*,
@@ -47,11 +48,11 @@
             r.description AS description,
             r.status      AS role_status
         FROM
-            user u
+            sys_user u
                 -- 关联中间表
-                LEFT JOIN user_role ur ON u.id = ur.user_id
+                LEFT JOIN sys_user_role ur ON u.id = ur.user_id
                 -- 关联角色表
-                LEFT JOIN role r ON ur.role_id = r.id
+                LEFT JOIN sys_role r ON ur.role_id = r.id
         WHERE
             u.id = #{userId}
     </select>

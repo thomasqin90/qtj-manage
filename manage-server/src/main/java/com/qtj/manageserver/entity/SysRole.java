@@ -28,17 +28,13 @@ public class SysRole implements Serializable {
 
     private Integer status;
 
-    @TableField("is_deleted")
-    @TableLogic
-    private Integer isDeleted;
-
     @TableField("create_time")
     private Date createTime;
 
     @TableField("update_time")
     private Date updateTime;
 
-    // 角色对应的权限集合
-    @TableField(exist = false)
-    private List<Long> permissionIds;
+    @TableField("is_deleted")
+    @TableLogic
+    private Integer isDeleted;
 }

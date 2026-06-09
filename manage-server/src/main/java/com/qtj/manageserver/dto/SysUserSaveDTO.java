@@ -6,6 +6,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
+// 用户保存
 @Data
 public class SysUserSaveDTO implements Serializable {
 
@@ -25,6 +26,6 @@ public class SysUserSaveDTO implements Serializable {
     private String phone;
 
     private Integer status;
-
+    // 角色ID集合
     private List<Long> roleIdList;
 }
