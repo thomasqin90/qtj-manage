@@ -1,13 +1,14 @@
 import request from "@/utils/request";
 import type { Page } from "@/types/page";
 import { buildApiUrl } from "@/utils/pathUtil";
-import { type User } from "@/types/user"
+import type { User, UserFilter } from "@/types/user"
 
-export function getUserList(page: Page) {
+export function getUserList(page: Page, query?: UserFilter) {
   const url = buildApiUrl("/user/list");
   return request.get(url, {
     params: {
       ...page,
+      ...query,
     },
   });
 }

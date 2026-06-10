@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qtj.manageserver.dto.SysUserDTO;
+import com.qtj.manageserver.dto.SysUserQueryDTO;
 import com.qtj.manageserver.dto.SysUserSaveDTO;
 import com.qtj.manageserver.entity.SysUser;
 import com.qtj.manageserver.entity.SysUserRole;
@@ -33,8 +34,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public IPage<SysUserDTO> getUserWithRolePage(Page<SysUserDTO> page, QueryWrapper<SysUser> queryWrapper) {
-        return userMapper.selectUserWithRole(page, queryWrapper);
+    public IPage<SysUserDTO> getUserWithRolePage(Page<SysUserDTO> page, SysUserQueryDTO query) {
+        return userMapper.selectUserWithRole(page, query);
     }
 
     @Override

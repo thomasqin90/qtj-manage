@@ -1,26 +1,29 @@
 <template>
   <div>用户管理</div>
   <!-- 筛选栏 -->
-  <el-form :inline="true" :model="queryParams">
+  <el-form ref="queryFormRef" :inline="true" :model="queryParams">
     <!-- 用户名 -->
-    <el-form-item label="用户名">
+    <el-form-item label="用户名" prop="username">
       <el-input v-model="queryParams.username"></el-input>
     </el-form-item>
     <!-- 昵称 -->
-    <el-form-item label="昵称">
+    <el-form-item label="昵称" prop="nickname">
       <el-input v-model="queryParams.nickname"></el-input>
     </el-form-item>
     <!-- 角色 -->
-    <el-form-item label="角色">
-      <el-select v-model="queryParams.role" style="width: 100px">
-        <el-option label="管理员" value="admin"></el-option>
-        <el-option label="普通用户" value="user"></el-option>
+    <el-form-item label="角色" prop="roleCode">
+      <el-select v-model="queryParams.roleId" style="width: 100px">
+        <el-option
+          v-for="role in roles"
+          :label="role.roleName"
+          :value="role.id"
+        ></el-option>
       </el-select>
     </el-form-item>
     <!-- 按钮 -->
     <el-form-item>
-      <el-button type="primary">查询</el-button>
-      <el-button>重置</el-button>
+      <el-button type="primary" @click="toQuery">查询</el-button>
+      <el-button @click="resetQuery">重置</el-button>
     </el-form-item>
   </el-form>
   <!-- 操作按钮 -->
@@ -68,16 +71,20 @@
   </el-dialog>
 </template>
 <script lang="ts" setup>
-import { getUserList } from "@/apis/user";
 import { onBeforeMount, reactive, ref } from "vue";
-import type { Page } from "@/types/page";
-import UserForm from "./UserForm.vue";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { deleteUsers } from "@/apis/user.ts";
+import UserForm from "./UserForm.vue";
+import { getUserList, deleteUsers } from "@/apis/user";
+import { getRoleList } from "@/apis/role.ts";
+import type { Page } from "@/types/page";
+import type { UserFilter } from "@/types/user";
+import type { Role } from "@/types/role";
 
+const queryFormRef = ref();
 const tableRef = ref();
 const editUserId = ref("");
 const multipleSelection = ref<User[]>([]);
+const roles = ref<Role[]>([]);
 // 用户
 interface User {
   id: string;
@@ -89,10 +96,10 @@ interface User {
   status: string;
 }
 // 查询参数
-const queryParams = reactive({
+const queryParams = reactive<UserFilter>({
   username: "",
   nickname: "",
-  role: "",
+  roleId: "",
 });
 // 分页参数
 const page: Page = reactive({
@@ -103,12 +110,24 @@ const total = ref(0);
 const tableData = ref<User[]>([]);
 
 onBeforeMount(() => {
-  getUserList(page).then((res) => {
+  getRoles();
+  getUsers();
+});
+
+function getRoles() {
+  getRoleList().then((res) => {
+    console.log("角色列表", res);
+    roles.value = res.data;
+  });
+}
+
+function getUsers() {
+  getUserList(page, queryParams).then((res) => {
     console.log("用户列表", res);
     tableData.value = res.data.records;
     total.value = Number(res.data.total);
   });
-});
+}
 
 function insertUser() {
   console.log("添加");
@@ -119,7 +138,7 @@ function insertUser() {
 async function delSelectedUsers() {
   console.log("删除选中");
   try {
-    if(multipleSelection.value.length === 0) {
+    if (multipleSelection.value.length === 0) {
       ElMessage.warning("请选择要删除的用户");
       return;
     }
@@ -134,6 +153,7 @@ async function delItem(row: User) {
   try {
     await showWaning();
     await deleteUsers([row.id]);
+    getUsers();
   } catch (error) {}
 }
 async function showWaning() {
@@ -152,16 +172,27 @@ function editItem(row: User) {
 //
 function onPageChange(currentPage: number, pageSize: number) {
   console.log("分页改变", currentPage, pageSize);
+  getUsers();
 }
 //
 const dialogFormVisible = ref(false);
 function userFormCallback(event: String) {
   dialogFormVisible.value = false;
+  getUsers();
 }
 //
 function handleSelectionChange(val: User[]) {
   console.log("选中", val);
   multipleSelection.value = val;
+}
+function toQuery() {
+  console.log("查询");
+  getUsers();
+}
+function resetQuery() {
+  console.log("重置");
+  queryFormRef.value.resetFields();
+  getUsers();
 }
 </script>
 <style lang="scss" scoped></style>

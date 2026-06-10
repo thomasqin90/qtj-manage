@@ -19,7 +19,7 @@
       <el-input v-model="form.phone"></el-input>
     </el-form-item>
     <el-form-item label="角色">
-      <el-select v-model="form.roles" multiple placeholder="请选择角色">
+      <el-select v-model="form.roleIdList" multiple placeholder="请选择角色">
         <el-option
           v-for="item in roleOptions"
           :key="item.id"
@@ -68,7 +68,7 @@ const form = reactive<User>({
   phone: "",
   password: "",
   status: 1,
-  roles: [] as string[],
+  roleIdList: [] as string[],
 });
 const rules = reactive({});
 const confirmPsd = ref("");
@@ -110,7 +110,7 @@ watchEffect(async () => {
     form.email = user.data.email;
     form.phone = user.data.phone;
     form.status = String(user.data.status);
-    // form.roles = user.data.roleList;
+    form.roleIdList = user.data.roleList.map((item: Role) => item.id);
     form.password = "";
     confirmPsd.value = "";
   } else {
@@ -121,7 +121,7 @@ watchEffect(async () => {
     form.phone = "";
     form.password = "";
     form.status = "1";
-    form.roles = [];
+    form.roleIdList = [];
     confirmPsd.value = "";
   }
 });

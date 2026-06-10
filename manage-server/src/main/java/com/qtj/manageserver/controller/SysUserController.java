@@ -1,8 +1,8 @@
 package com.qtj.manageserver.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qtj.manageserver.common.Result;
@@ -10,10 +10,8 @@ import com.qtj.manageserver.dto.PageDTO;
 import com.qtj.manageserver.dto.SysUserDTO;
 import com.qtj.manageserver.dto.SysUserQueryDTO;
 import com.qtj.manageserver.dto.SysUserSaveDTO;
-import com.qtj.manageserver.entity.SysUser;
 import com.qtj.manageserver.service.SysUserService;
 import com.qtj.manageserver.vo.SysUserVO;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,17 +26,13 @@ public class SysUserController {
     // 用户列表
     @GetMapping("/list")
     public Result<IPage<SysUserVO>> list(PageDTO pageDto, SysUserQueryDTO userQueryDto) {
-        // 查询条件
-        QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like(StrUtil.isNotBlank(userQueryDto.getUsername()), "username", userQueryDto.getUsername());
-        queryWrapper.like(StrUtil.isNotBlank(userQueryDto.getNickname()), "nickname", userQueryDto.getNickname());
-        queryWrapper.eq("is_deleted", 0);
         // 分页，直接调用MyBatisPlus的IPage
         Page<SysUserDTO> page = Page.of(pageDto.getPageNum(), pageDto.getPageSize());
-        IPage<SysUserDTO> pageRes = sysUserService.getUserWithRolePage(page, queryWrapper);
+        // 查询用户列表
+        IPage<SysUserDTO> pageRes = sysUserService.getUserWithRolePage(page, userQueryDto);
         IPage<SysUserVO> res = pageRes.convert((SysUserDTO dto) -> {
             SysUserVO vo = new SysUserVO();
-            BeanUtils.copyProperties(dto, vo);
+            BeanUtil.copyProperties(dto, vo);
             return vo;
         });
         return Result.success(res);
@@ -48,7 +42,7 @@ public class SysUserController {
     public Result<SysUserVO> detail(@PathVariable Long id) {
         SysUserDTO user = sysUserService.getUserWithRole(id);
         SysUserVO userVO = new SysUserVO();
-        BeanUtils.copyProperties(user, userVO);
+        BeanUtil.copyProperties(user, userVO);
         return Result.success(userVO);
     }
     // 新增用户

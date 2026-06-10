@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -27,5 +28,5 @@ public class SysRoleDTO implements Serializable {
 
     private Date updateTime;
 
-    private List<SysPermissionDTO> permissionList;
+    private List<SysPermissionDTO> permissionList = new ArrayList<>();
 }

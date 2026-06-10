@@ -16,44 +16,52 @@
         <result column="update_time" property="updateTime"/>
 
         <!-- 一对多：角色列表 -->
-        <collection property="roleList" ofType="com.qtj.manageserver.dto.SysRoleDTO">
-            <id column="role_id" property="id"/>
-            <result column="role_name" property="roleName"/>
-            <result column="role_code" property="roleCode"/>
-            <result column="description" property="description"/>
-            <result column="role_status" property="status"/>
-        </collection>
+        <collection
+            property="roleList"
+            ofType="com.qtj.manageserver.dto.SysRoleDTO"
+            select="selectRolesByUserId"
+            column="id"
+        />
     </resultMap>
+    <!-- ====================== 1. 根据用户ID查询角色（子查询） ====================== -->
+    <select id="selectRolesByUserId" resultType="com.qtj.manageserver.dto.SysRoleDTO">
+        SELECT
+            r.id,
+            r.role_name,
+            r.role_code,
+            r.description,
+            r.status
+        FROM sys_user_role ur
+            JOIN sys_role r
+            ON ur.role_id = r.id
+        WHERE ur.user_id = #{userId}
+    </select>
     <!--  查询用户列表  -->
     <select id="selectUserWithRole" resultMap="UserRoleMap">
         SELECT
-            u.*,
-            r.id          AS role_id,
-            r.role_name   AS role_name,
-            r.role_code   AS role_code,
-            r.description AS description,
-            r.status      AS role_status
+        u.*
         FROM sys_user u
-        LEFT JOIN sys_user_role ur ON u.id = ur.user_id
-        LEFT JOIN sys_role r ON ur.role_id = r.id
-        ${ew.customSqlSegment}
+        <where>
+            <if test="query.username != null and query.username != ''">
+                AND u.username LIKE CONCAT('%',#{query.username},'%')
+            </if>
+            <if test="query.nickname != null and query.nickname != ''">
+                AND u.nickname LIKE CONCAT('%',#{query.nickname},'%')
+            </if>
+            <if test="query.roleId != null and query.roleId != ''">
+                AND u.id IN (
+                    SELECT user_id FROM sys_user_role WHERE role_id = #{query.roleId}
+                )
+            </if>
+        </where>
     </select>
     <!--  查询用户详情  -->
     <select id="getUserDetail" resultMap="UserRoleMap">
         SELECT
-            u.*,
-            r.id          AS role_id,
-            r.role_name   AS role_name,
-            r.role_code   AS role_code,
-            r.description AS description,
-            r.status      AS role_status
+            *
         FROM
-            sys_user u
-                -- 关联中间表
-                LEFT JOIN sys_user_role ur ON u.id = ur.user_id
-                -- 关联角色表
-                LEFT JOIN sys_role r ON ur.role_id = r.id
+            sys_user
         WHERE
-            u.id = #{userId}
+            id = #{userId}
     </select>
 </mapper>

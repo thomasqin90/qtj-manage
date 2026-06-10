@@ -16,7 +16,11 @@ mybatis-plus:
     # 打印 SQL 核心配置
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath:com/qtj/manageserver/mapper/*.xml
-
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted # 全局逻辑删除字段
+      logic-delete-value: 1
+      logic-not-delete-value: 0
 
 files:
   upload:

@@ -6,5 +6,11 @@ export interface User {
   email: string;
   phone: string;
   status: number | string;
-  roles: string[];
+  roleIdList: string[];
 }
+
+export interface UserFilter {
+  username?: string;
+  nickname?: string;
+  roleId?: string;
+};
