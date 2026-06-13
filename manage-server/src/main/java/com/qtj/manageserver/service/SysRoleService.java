@@ -14,4 +14,6 @@ public interface SysRoleService extends IService<SysRole> {
      * @return
      */
     boolean assignPermissions(Long roleId, List<Long> permissionIds);
+
+    List<Long> selectRolePermissionIds(Long roleId);
 }

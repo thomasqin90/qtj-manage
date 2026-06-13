@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class SysPermissionDTO implements Serializable {
@@ -30,4 +32,6 @@ public class SysPermissionDTO implements Serializable {
     private String icon;
 
     private Integer status;
+
+    private List<SysPermissionDTO> children = new ArrayList<>();
 }

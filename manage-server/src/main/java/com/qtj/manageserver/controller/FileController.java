@@ -63,6 +63,8 @@ public class FileController {
         Path path = Paths.get(downloadDir).resolve(filename).normalize();
         Resource resource = new UrlResource(path.toUri());
         if(resource.exists() && resource.isReadable()) {
+            // Content-Type 数据流
+            // Content-Disposition 附件
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header(HttpHeaders.CONTENT_DISPOSITION,

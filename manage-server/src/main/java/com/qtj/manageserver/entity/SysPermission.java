@@ -43,7 +43,7 @@ public class SysPermission implements Serializable {
     @TableField("permission_type")
     private String permissionType;
 
-    @TableField("permission_id")
+    @TableField("parent_id")
     private Long parentId;
 
     @TableField

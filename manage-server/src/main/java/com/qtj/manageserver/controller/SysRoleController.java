@@ -7,16 +7,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qtj.manageserver.common.Result;
 import com.qtj.manageserver.dto.PageDTO;
+import com.qtj.manageserver.dto.SysRoleAssignDTO;
 import com.qtj.manageserver.dto.SysRoleQueryDTO;
 import com.qtj.manageserver.entity.SysRole;
 import com.qtj.manageserver.service.SysRoleService;
 import com.qtj.manageserver.vo.SysRoleVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -81,8 +84,13 @@ public class SysRoleController {
     }
     // 角色关联权限
     @PostMapping("/assign")
-    public Result<Boolean> assign(Long roleID, Long[] permissions) {
-        boolean res = sysRoleService.assignPermissions(roleID, Arrays.asList(permissions));
+    public Result<Boolean> assign(@RequestBody SysRoleAssignDTO dto) {
+        boolean res = sysRoleService.assignPermissions(dto.getRoleId(), dto.getPermissionIds());
         return Result.success(res);
+    }
+
+    @GetMapping("/permissionids")
+    public Result<List<Long>> listRolePermissionIds(@NotNull Long roleId) {
+        return Result.success(sysRoleService.selectRolePermissionIds(roleId));
     }
 }

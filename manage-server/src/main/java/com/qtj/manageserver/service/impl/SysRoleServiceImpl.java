@@ -36,4 +36,12 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         }
         return true;
     }
+
+    @Override
+    public List<Long> selectRolePermissionIds(Long roleId) {
+        QueryWrapper<SysRolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        List<SysRolePermission> list = sysRolePermissionMapper.selectList(queryWrapper);
+        return list.stream().map(SysRolePermission::getPermissionId).toList();
+    }
 }

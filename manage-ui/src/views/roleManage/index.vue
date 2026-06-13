@@ -69,25 +69,35 @@
   <!-- 授权弹窗 -->
   <el-dialog v-model="assignDialogVisible" title="角色授权">
     <el-tree
+      ref="permissionTreeRef"
       style="max-width: 600px"
+      node-key="id"
       :props="permissionTreeProps"
       :data="permissionTreeData"
-      :default-checked-keys="defaultCheckedKeys"
       show-checkbox
-      @check-change="handleCheckChange"
     />
+    <template #footer>
+      <el-button @click="cancelAssign">取消</el-button>
+      <el-button type="primary" @click="handleAssign">确定</el-button>
+    </template>
   </el-dialog>
 </template>
 <script lang="ts" setup>
 import { onBeforeMount, reactive, ref } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
-import { getRolePage, deleteRoles } from "@/apis/role.ts";
+import {
+  getRolePage,
+  deleteRoles,
+  assignPermissions,
+  getRolePermissions,
+} from "@/apis/role.ts";
+import { getPermissionTree } from "@/apis/permission.ts";
 import type { Page } from "@/types/page";
 import type { Role, RoleFilter } from "@/types/role";
 import RoleForm from "./RoleForm.vue";
 
 const queryFormRef = ref();
-const tableRef = ref();
+const permissionTreeRef = ref();
 const editRoleId = ref("");
 const multipleSelection = ref<Role[]>([]);
 
@@ -108,7 +118,15 @@ const tableData = ref<Role[]>([]);
 //
 onBeforeMount(() => {
   getRoles();
+  initPermissionTree();
 });
+//
+function initPermissionTree() {
+  getPermissionTree().then((res) => {
+    console.log("权限树", res);
+    permissionTreeData.value = res.data;
+  });
+}
 //
 function getRoles() {
   getRolePage(page, queryParams).then((res) => {
@@ -162,9 +180,16 @@ function editItem(row: Role) {
   editRoleId.value = row.id ?? "";
   formDialogVisible.value = true;
 }
-// 授权
-function assignItem(row: Role) {
+// 授权，显示授权弹窗
+async function assignItem(row: Role) {
+  if (permissionTreeRef.value) {
+    permissionTreeRef.value.setCheckedKeys([]);
+  }
   assignDialogVisible.value = true;
+  editRoleId.value = row.id ?? "";
+  const res = await getRolePermissions(editRoleId.value);
+  permissionTreeRef.value.setCheckedKeys(res.data);
+  console.log("角色权限", res);
 }
 // 分页改变
 function onPageChange(currentPage: number, pageSize: number) {
@@ -197,19 +222,21 @@ function resetQuery() {
 // 权限树
 const permissionTreeProps = {
   children: "children",
-  label: "name",
+  label: "permissionName",
 };
 //
 const permissionTreeData = ref([]);
 //
-const defaultCheckedKeys = ref([]);
-//
-function handleCheckChange() {
-  console.log("权限树变化");
+function cancelAssign() {
+  assignDialogVisible.value = false;
 }
 //
-function refreshPermissionTree() {
-
+async function handleAssign() {
+  console.log("授权确定");
+  const permissionKeys = permissionTreeRef.value.getCheckedKeys() as string[];
+  console.log("权限keys", permissionKeys);
+  await assignPermissions(editRoleId.value, permissionKeys);
+  assignDialogVisible.value = false;
 }
 </script>
 <style lang="scss" scoped></style>

@@ -1,5 +1,6 @@
 package com.qtj.manageserver.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -9,12 +10,16 @@ import com.qtj.manageserver.dto.PageDTO;
 import com.qtj.manageserver.dto.SysPermissionDTO;
 import com.qtj.manageserver.entity.SysPermission;
 import com.qtj.manageserver.service.SysPermissionService;
+import com.qtj.manageserver.service.SysRoleService;
 import com.qtj.manageserver.vo.SysPermissionVO;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,26 +31,25 @@ public class SysPermissionController {
     public SysPermissionController(SysPermissionService sysPermissionService) {
         this.sysPermissionService = sysPermissionService;
     }
+    // 查询所有权限，构建成树形结构
+    @GetMapping("/tree")
+    public Result<List<SysPermissionVO>> tree(String permissionName) {
+        List<SysPermissionDTO> list = sysPermissionService.selectTree(permissionName);
+        List<SysPermissionVO> res = list.stream().map(this::dto2vo).toList();
+        return Result.success(res);
+    }
 
-    @GetMapping("/list")
-    public Result<IPage<SysPermissionVO>> list(PageDTO pageDto, SysPermissionDTO sysPermissionDto) {
-        Page<SysPermission> page = Page.of(pageDto.getPageNum(), pageDto.getPageSize());
-        QueryWrapper<SysPermission> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("permission_name", "permission_code", "permission_type");
-        queryWrapper.like(StrUtil.isNotBlank(sysPermissionDto.getPermissionName()), "permission_name",
-                sysPermissionDto.getPermissionName());
-        queryWrapper.like(StrUtil.isNotBlank(sysPermissionDto.getPermissionCode()), "permission_code",
-                sysPermissionDto.getPermissionCode());
-        queryWrapper.like(StrUtil.isNotBlank(sysPermissionDto.getPermissionType()), "permission_type",
-                sysPermissionDto.getPermissionType());
-        IPage<SysPermission> res = sysPermissionService.page(page, queryWrapper);
-        log.info(res.toString());
-        IPage<SysPermissionVO> voRes = res.convert(entity -> {
-            SysPermissionVO vo = new SysPermissionVO();
-            BeanUtils.copyProperties(entity, vo);
-            return vo;
-        });
-        return Result.success(voRes);
+    private SysPermissionVO dto2vo(SysPermissionDTO dto) {
+        SysPermissionVO vo = new SysPermissionVO();
+        BeanUtil.copyProperties(dto, vo);
+        vo.setChildren(new ArrayList<>());
+        if(!dto.getChildren().isEmpty()) {
+            for(SysPermissionDTO childDTO: dto.getChildren()) {
+                SysPermissionVO childVO = dto2vo(childDTO);
+                vo.getChildren().add(childVO);
+            }
+        }
+        return vo;
     }
 
     @GetMapping("/{id}")

@@ -27,6 +27,4 @@ public class SysRoleDTO implements Serializable {
     private Date createTime;
 
     private Date updateTime;
-
-    private List<SysPermissionDTO> permissionList = new ArrayList<>();
 }

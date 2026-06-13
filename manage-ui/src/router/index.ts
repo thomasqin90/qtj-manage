@@ -28,6 +28,11 @@ const router = createRouter({
           name: "role",
           component: () => import("@/views/roleManage/index.vue"),
         },
+        {
+          path: "permission",
+          name: "permission",
+          component: () => import("@/views/permissionManage/index.vue"),
+        }
       ],
     },
     {

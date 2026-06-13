@@ -94,8 +94,10 @@ VALUES ('管理员', 'admin', '管理员', 1, 0),
 
 -- 创建默认权限：用户管理，角色管理，权限管理
 BEGIN;
-INSERT INTO `sys_permission` (`id`, `permission_name`, `permission_code`, `description`, `permission_type`, `parent_id`, `path`, `component`, `icon`, `status`, `is_deleted`)
-VALUES (1, '用户管理', 'user', '用户管理', 1, 0, '/user', '', '', 1, 0),
-(2, '角色管理', 'role', '角色管理', 1, 0, '/role', '', '', 1, 0),
-(3, '权限管理', 'permission', '权限管理', 1, 0, '/permission', '', '', 1, 0);
+INSERT INTO `sys_permission` (`permission_name`, `permission_code`, `description`, `permission_type`, `parent_id`, `path`, `component`, `icon`, `status`, `is_deleted`)
+VALUES 
+('系统管理', 'system', '系统管理', 1, 0, '/', '', '', 1, 0),
+('用户管理', 'user', '用户管理', 1, 1, '/user', '', '', 1, 0),
+('角色管理', 'role', '角色管理', 1, 1, '/role', '', '', 1, 0),
+('权限管理', 'permission', '权限管理', 1, 1, '/permission', '', '', 1, 0);
 COMMIT;

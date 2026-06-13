@@ -17,10 +17,14 @@ const app = createApp(App);
 app.use(ElementPlus, {
   locale: zhCn,
 });
+// 批量注册所有图标
+const iconList:string[] = [];
 // 全局引入element-plus的图标
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component);
+  iconList.push(key);
 }
+app.config.globalProperties.$iconList = iconList
 // 数据共享
 app.use(createPinia());
 // 路由

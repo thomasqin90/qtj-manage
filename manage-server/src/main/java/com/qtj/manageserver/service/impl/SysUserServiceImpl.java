@@ -24,23 +24,20 @@ import java.util.List;
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
-    private final SysUserMapper userMapper;
-
     private final SysUserRoleMapper userRoleMapper;
     // 构造函数中传入依赖
-    public SysUserServiceImpl(SysUserMapper userMapper, SysUserRoleMapper userRoleMapper) {
-        this.userMapper = userMapper;
+    public SysUserServiceImpl(SysUserRoleMapper userRoleMapper) {
         this.userRoleMapper = userRoleMapper;
     }
 
     @Override
     public IPage<SysUserDTO> getUserWithRolePage(Page<SysUserDTO> page, SysUserQueryDTO query) {
-        return userMapper.selectUserWithRole(page, query);
+        return baseMapper.selectUserWithRole(page, query);
     }
 
     @Override
     public SysUserDTO getUserWithRole(Long id) {
-        return userMapper.getUserDetail(id);
+        return baseMapper.getUserDetail(id);
     }
     // 新增用户，包含角色
     @Override
@@ -49,7 +46,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(sysUserSaveDTO, sysUser);
         // 保存
-        Long userId = (long) userMapper.insert(sysUser);
+        Long userId = (long) baseMapper.insert(sysUser);
         if(sysUserSaveDTO.getRoleIdList() != null && !sysUserSaveDTO.getRoleIdList().isEmpty()) {
             List<SysUserRole> sysUserRoleList = new ArrayList<>();
             sysUserSaveDTO.getRoleIdList().forEach((Long roleId) -> {
@@ -69,7 +66,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         SysUser sysUser = new SysUser();
         BeanUtils.copyProperties(sysUserSaveDTO, sysUser);
         // 更新主表
-        userMapper.updateById(sysUser);
+        baseMapper.updateById(sysUser);
         // 先删除用户-角色关系
         QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", sysUserSaveDTO.getId());
@@ -92,7 +89,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserWithRole(Long[] idList) {
         // 删除主表
-        userMapper.deleteByIds(Arrays.asList(idList));
+        baseMapper.deleteByIds(Arrays.asList(idList));
         // 删除关联表
         QueryWrapper<SysUserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("user_id", Arrays.asList(idList));
