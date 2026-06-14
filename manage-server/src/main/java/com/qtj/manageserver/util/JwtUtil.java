@@ -50,6 +50,35 @@ public class JwtUtil {
     }
 
     public Claims getClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
 
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        if(claims != null) {
+            return claims.get("userId", Long.class);
+        }
+        return null;
+    }
+
+    public String getUsernameFromToken(String token) {
+        Claims claims = getClaimsFromToken(token);
+        if(claims != null) {
+            return claims.get("username", String.class);
+        }
+        return null;
+    }
+
+    /**
+     * token是否过期
+     * @return
+     */
+    public boolean isTokenExpired(String token) {
+        Claims claims = getClaimsFromToken(token);
+        return claims == null;
     }
 }

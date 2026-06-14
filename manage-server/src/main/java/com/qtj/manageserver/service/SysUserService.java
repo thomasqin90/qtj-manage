@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.qtj.manageserver.dto.LoginDTO;
 import com.qtj.manageserver.dto.SysUserDTO;
 import com.qtj.manageserver.dto.SysUserQueryDTO;
 import com.qtj.manageserver.dto.SysUserSaveDTO;
@@ -47,4 +48,6 @@ public interface SysUserService extends IService<SysUser> {
      * @return
      */
     boolean deleteUserWithRole(Long[] idList);
+
+    SysUserDTO login(LoginDTO loginDTO);
 }

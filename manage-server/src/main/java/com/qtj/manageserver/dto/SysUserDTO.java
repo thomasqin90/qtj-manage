@@ -33,4 +33,6 @@ public class SysUserDTO implements Serializable {
     private Date updateTime;
 
     private List<SysRoleDTO> roleList = new ArrayList<>();
+
+    private String token;
 }
