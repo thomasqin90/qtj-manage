@@ -33,3 +33,4 @@ export function deleteUsers(idList: string[]) {
     const url = buildApiUrl(`/user/${ids}`);
     return request.delete(url);
 }
+

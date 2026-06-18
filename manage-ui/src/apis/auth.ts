@@ -1,7 +1,11 @@
 import request from "@/utils/request";
 import { buildApiUrl } from "@/utils/pathUtil";
 
-export function login(data) {
+export function login(data: { username: string, password: string }) {
     const url = buildApiUrl("/auth/login");
-    request.post(url, data);
-}  
+    return request.post(url, data);
+}
+
+export function logout() {
+
+}
