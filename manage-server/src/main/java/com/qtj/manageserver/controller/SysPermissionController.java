@@ -1,20 +1,12 @@
 package com.qtj.manageserver.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qtj.manageserver.common.Result;
-import com.qtj.manageserver.dto.PageDTO;
 import com.qtj.manageserver.dto.SysPermissionDTO;
 import com.qtj.manageserver.entity.SysPermission;
 import com.qtj.manageserver.service.SysPermissionService;
-import com.qtj.manageserver.service.SysRoleService;
 import com.qtj.manageserver.vo.SysPermissionVO;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -56,14 +48,14 @@ public class SysPermissionController {
     public Result<SysPermissionVO> detail(@PathVariable long id) {
         SysPermission res = sysPermissionService.getById(id);
         SysPermissionVO vo = new SysPermissionVO();
-        BeanUtils.copyProperties(res, vo);
+        BeanUtil.copyProperties(res, vo);
         return Result.success(vo);
     }
 
     @PostMapping
     public Result<Boolean> add(@RequestBody SysPermissionDTO dto) {
         SysPermission entity = new SysPermission();
-        BeanUtils.copyProperties(dto, entity);
+        BeanUtil.copyProperties(dto, entity);
         boolean res = sysPermissionService.save(entity);
         return Result.success(res);
     }
@@ -72,7 +64,7 @@ public class SysPermissionController {
     public Result<Boolean> update(@PathVariable Long id, @RequestBody SysPermissionDTO dto) {
         SysPermission entity = new SysPermission();
         entity.setId(id);
-        BeanUtils.copyProperties(dto, entity);
+        BeanUtil.copyProperties(dto, entity);
         boolean res = sysPermissionService.updateById(entity);
         return Result.success(res);
     }
@@ -81,5 +73,21 @@ public class SysPermissionController {
     public Result<Boolean> delete(@PathVariable Long[] ids) {
         boolean res = sysPermissionService.removeByIds(Arrays.asList(ids));
         return Result.success(res);
+    }
+
+    /**
+     * 获取用户的权限信息
+     * @param userId
+     * @return
+     */
+    @GetMapping("routes")
+    public Result<List<SysPermissionVO>> routes(Long userId) {
+        List<SysPermissionDTO> dto = sysPermissionService.selectTreeByUserId(userId);
+        List<SysPermissionVO> vo = dto.stream().map(d -> {
+            SysPermissionVO v = new SysPermissionVO();
+            BeanUtil.copyProperties(d, v);
+            return v;
+        }).toList();
+        return Result.success(vo);
     }
 }

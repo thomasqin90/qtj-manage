@@ -9,6 +9,7 @@ export interface Permission {
   component: string;
   icon: string;
   status: number;
+  children?: Permission[] | null;
 }
 
 export interface PermissionFilter {

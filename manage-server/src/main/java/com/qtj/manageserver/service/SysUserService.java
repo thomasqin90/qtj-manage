@@ -49,5 +49,18 @@ public interface SysUserService extends IService<SysUser> {
      */
     boolean deleteUserWithRole(Long[] idList);
 
+    /**
+     * 登录
+     * @param loginDTO
+     * @return
+     */
     SysUserDTO login(LoginDTO loginDTO);
+
+    /**
+     * 修改密码
+     * @param userId
+     * @param password
+     * @return
+     */
+    boolean changePassword(Long userId, String password);
 }

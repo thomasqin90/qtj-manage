@@ -31,6 +31,15 @@ public class SysPermissionServiceImpl
         return filterPermissionTree(permissionList, keyword);
     }
 
+    @Override
+    public List<SysPermissionDTO> selectTreeByUserId(Long userId) {
+        List<Long> permissionIds = baseMapper.selectPermissionIdsByUserId(userId);
+        QueryWrapper<SysPermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", permissionIds);
+        List<SysPermission> permissions = baseMapper.selectList(queryWrapper);
+        return buildPermissionTree(permissions);
+    }
+
     private List<SysPermissionDTO> filterPermissionTree(List<SysPermission> list, String keyword) {
         // 匹配到的id
         Set<Long> matchIds = list.stream()
@@ -69,6 +78,11 @@ public class SysPermissionServiceImpl
                 });
     }
 
+    /**
+     * 把扁平的权限列表转换成树型结构
+     * @param list
+     * @return
+     */
     private List<SysPermissionDTO> buildPermissionTree(List<SysPermission> list) {
         List<SysPermissionDTO> tree = new ArrayList<>();
         // 辅助查询父节点

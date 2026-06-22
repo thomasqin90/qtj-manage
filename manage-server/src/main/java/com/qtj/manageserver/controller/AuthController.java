@@ -28,4 +28,9 @@ public class AuthController {
         BeanUtil.copyProperties(user, vo);
         return Result.success(vo);
     }
+
+    @PostMapping("/password")
+    public Result<Boolean> changePassword(Long userId, String password) {
+        return Result.success(null);
+    }
 }

@@ -34,3 +34,8 @@ export function deletePermission(id: string) {
     const url = buildApiUrl(`/permission/${id}`);
     return request.delete(url);
 }
+
+export function getRoutes() {
+    const url = buildApiUrl("/permission/routes");
+    return request.get(url);
+}

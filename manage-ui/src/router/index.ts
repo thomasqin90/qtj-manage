@@ -32,6 +32,11 @@ const router = createRouter({
           path: "permission",
           name: "permission",
           component: () => import("@/views/permissionManage/index.vue"),
+        },
+        {
+          path: "personCenter",
+          name: "personCenter",
+          component: () => import("@/views/personCenter/index.vue"),
         }
       ],
     },

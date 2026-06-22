@@ -13,4 +13,11 @@ public interface SysPermissionService extends IService<SysPermission> {
      * @return
      */
     List<SysPermissionDTO> selectTree(String keyword);
+
+    /**
+     * 查询指定用户的权限树
+     * @param userId
+     * @return
+     */
+    List<SysPermissionDTO> selectTreeByUserId(Long userId);
 }

@@ -125,8 +125,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         }
         // 查询用户对应的角色
         SysUserDTO userDetail = baseMapper.getUserDetail(user.getId());
+        //
         String token = jwtUtil.generateToken(user.getId(), user.getUsername());
         userDetail.setToken(token);
         return userDetail;
+    }
+
+    @Override
+    public boolean changePassword(Long userId, String password) {
+
+        return false;
     }
 }
