@@ -10,8 +10,9 @@ import * as ElementPlusIconsVue from "@element-plus/icons-vue";
 // 引入中文语言包
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 import App from "./App.vue";
+// 引入路由
 import router from "./router";
-
+// 
 const app = createApp(App);
 // 全局引入element-plus
 app.use(ElementPlus, {
@@ -27,7 +28,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.config.globalProperties.$iconList = iconList
 // 数据共享
 app.use(createPinia());
-// 路由
+// 安装路由
 app.use(router);
 // 将App挂在到页面中
 app.mount("#app");

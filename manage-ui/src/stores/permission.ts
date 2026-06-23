@@ -3,13 +3,7 @@ import { getRoutes } from "@/apis/permission";
 import type { Permission } from "@/types/permission";
 import type { RouteRecordRaw } from "vue-router";
 import { addAsyncRoutes } from "@/router";
-
-const loadView = (component: string) => {
-  if (component === "Layout") {
-    return "@/layouts/MainLayout.vue";
-  }
-  return `@/views/${component}.vue`;
-};
+import componentMap from "@/router/componentMap";
 
 export const usePermissionStore = defineStore("permission", {
   state: () => ({
@@ -22,6 +16,7 @@ export const usePermissionStore = defineStore("permission", {
     },
     // 权限转路由
     async generateRoutes() {
+      console.log("生成路由", componentMap);
       // 获取权限列表
       const res = await getRoutes();
       console.log("权限列表", res);
@@ -38,7 +33,7 @@ export const usePermissionStore = defineStore("permission", {
         const route: RouteRecordRaw = {
           name: permission.permissionName,
           path: permission.path,
-          component: () => import(loadView(permission.component)),
+          component: componentMap[permission.component],
           children: [],
           meta: {
             title: permission.permissionName,

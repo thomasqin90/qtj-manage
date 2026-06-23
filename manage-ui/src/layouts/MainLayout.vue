@@ -10,11 +10,12 @@
           <!-- 当前页面路径 -->
           <div class="path">
             <el-breadcrumb separator="/">
-              <el-breadcrumb-item :to="{ path: '/' }"
-                >homepage</el-breadcrumb-item
+              <el-breadcrumb-item
+                :to="{ path: item.path }"
+                v-for="item in breadList"
+                :key="item.path"
               >
-              <el-breadcrumb-item>
-                <a href="/">promotion management</a>
+                {{ item.meta.title }}
               </el-breadcrumb-item>
             </el-breadcrumb>
           </div>
@@ -37,9 +38,8 @@
                 </el-icon>
               </div>
               <template #dropdown>
-                <el-dropdown-item>个人中心</el-dropdown-item>
-                <el-dropdown-item>修改密码</el-dropdown-item>
-                <el-dropdown-item>退出登录</el-dropdown-item>
+                <el-dropdown-item @click="$router.push('/personCenter')">个人中心</el-dropdown-item>
+                <el-dropdown-item @click="handleLoginout">退出登录</el-dropdown-item>
               </template>
             </el-dropdown>
           </div>
@@ -53,12 +53,13 @@
         >
           <el-scrollbar>
             <el-menu
+              router
               :default-active="activeMenu"
               :collapse="isCollapse"
               @open="handleOpen"
               @close="handleClose"
             >
-              <el-menu-item index="home">
+              <el-menu-item index="/home">
                 <el-icon><House /></el-icon>
                 <span>首页</span>
               </el-menu-item>
@@ -89,30 +90,41 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import TheMenuItem from "@/components/TheMenuItem/index.vue";
 import type { Menu } from "@/components/TheMenuItem/types";
 import { useThemeStore } from "@/stores/theme";
+import { useUserStore } from "@/stores/user";
 import { usePermissionStore } from "@/stores/permission";
 import { DArrowRight } from "@element-plus/icons-vue";
-import { type RouteRecordRaw } from "vue-router";
+import {
+  type RouteLocationMatched,
+  type RouteRecordRaw,
+  useRoute, useRouter
+} from "vue-router";
 
 const themeStore = useThemeStore();
 const permissionStore = usePermissionStore();
+const userStore = useUserStore();
+const route = useRoute();
+const router = useRouter();
+// 激活菜单标识
+const activeMenu = ref(route.path);
 
-const activeMenu = ref("home");
 // 菜单
 const menuList = ref<Menu[]>([]);
 
 onMounted(() => {
   buildMenus(permissionStore.menuRoutes);
-})
+  // 初始化执行
+  getBreadcrumb();
+});
 
 function buildMenus(routes: RouteRecordRaw[]) {
   console.log("buildMenus", routes);
   routes.forEach((route) => {
     menuList.value.push(route2Menu(route));
-  })
+  });
   console.log("menuList", menuList.value);
 }
 
@@ -122,12 +134,12 @@ function route2Menu(route: RouteRecordRaw): Menu {
     index: route.path,
     name: route.meta?.title as string,
     icon: route.meta?.icon as string,
-    children: [] as Menu[]
+    children: [] as Menu[],
   };
-  if(route.children && route.children.length > 0) {
+  if (route.children && route.children.length > 0) {
     route.children.forEach((child) => {
       menu.children.push(route2Menu(child));
-    })
+    });
   }
   return menu;
 }
@@ -148,6 +160,32 @@ function toggleCollapse() {
 const asideWidth = computed(() => {
   return isCollapse.value ? "66px" : "200px";
 });
+
+// 面包屑数组
+const breadList = ref<RouteLocationMatched[]>([]);
+
+// 生成面包屑函数
+const getBreadcrumb = () => {
+  // matched 包含所有层级路由
+  breadList.value = route.matched.filter(
+    (item) => item.meta && item.meta.title,
+  );
+};
+
+// 监听路由变化，自动更新面包屑
+watch(
+  () => route.path,
+  (path) => {
+    getBreadcrumb();
+    activeMenu.value = path;
+  },
+  { immediate: true },
+);
+
+function handleLoginout() {
+  userStore.toLogout();
+  router.replace("/login");
+}
 </script>
 <style lang="scss" scoped>
 .main-layout {

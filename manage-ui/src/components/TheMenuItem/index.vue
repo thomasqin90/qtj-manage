@@ -15,7 +15,7 @@
   <!-- 无子菜单：渲染 el-menu-item -->
   <el-menu-item v-else :index="item.index">
     <el-icon v-if="item.icon"><component :is="item.icon" /></el-icon>
-    <span>{{ item.name }}</span>
+    <span >{{ item.name }}</span>
   </el-menu-item>
 </template>
 

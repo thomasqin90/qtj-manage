@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
 import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -10,6 +11,7 @@ const request = axios.create({
 request.interceptors.request.use(
   (request) => {
     const userStore = useUserStore();
+    // 添加token
     if (userStore.token) {
       request.headers["Authorization"] = `Bearer ${userStore.token}`;
     }
@@ -30,6 +32,8 @@ request.interceptors.response.use(
     if (error.reponse) {
       if (error.reponse.status === 401) {
         // 跳转登录
+        ElMessage.error("请先登录");
+        router.push("/login");
       } else if (error.reponse.status === 404) {
         // 接口不存在
         ElMessage.error("接口不存在");
@@ -37,6 +41,7 @@ request.interceptors.response.use(
         // 服务器错误
         ElMessage.error("服务器错误");
       } else {
+        // 
         ElMessage.error(error.message);
       }
     } else {
