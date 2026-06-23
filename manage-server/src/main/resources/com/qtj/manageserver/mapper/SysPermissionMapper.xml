@@ -5,7 +5,7 @@
 <mapper namespace="com.qtj.manageserver.mapper.SysPermissionMapper">
     <select id="selectPermissionIdsByUserId" resultType="java.lang.Long">
         SELECT rp.permission_id FROM sys_role_permission rp
-        WHERE rb.role_id IN (
+        WHERE rp.role_id IN (
             SELECT role_id
             FROM sys_user_role
             WHERE user_id = #{userId}

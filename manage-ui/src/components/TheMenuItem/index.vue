@@ -20,19 +20,16 @@
 </template>
 
 <script lang="ts" setup>
-interface Menu {
-  id: number
-  name: string
-  index: string
-  icon?: string
-  children?: Menu[]
-}
+import type { Menu } from "./types";
+// 必须手动定义组件名称，大驼峰 TheMenuItem
+defineOptions({
+  name: "TheMenuItem",
+});
 interface Props {
-  item: Menu
+  item: Menu;
 }
 
 // 接收菜单数据
-const props = defineProps<Props>()
+const props = defineProps<Props>();
 const item = props.item;
-
 </script>

@@ -2,50 +2,64 @@ import { defineStore } from "pinia";
 import { getRoutes } from "@/apis/permission";
 import type { Permission } from "@/types/permission";
 import type { RouteRecordRaw } from "vue-router";
+import { addAsyncRoutes } from "@/router";
 
-const loadView = (str: string) => {
-  if (str === "Layout") {
-    return "@/layout/index.vue";
+const loadView = (component: string) => {
+  if (component === "Layout") {
+    return "@/layouts/MainLayout.vue";
   }
-  return `@/views/${str}.vue`;
+  return `@/views/${component}.vue`;
 };
 
 export const usePermissionStore = defineStore("permission", {
   state: () => ({
     // 路由
-    routes: [],
+    menuRoutes: [] as RouteRecordRaw[],
   }),
   actions: {
-    setRoutes(routes: []) {
-      this.routes = routes;
+    setRoutes(routes: RouteRecordRaw[]) {
+      this.menuRoutes = routes;
     },
+    // 权限转路由
     async generateRoutes() {
+      // 获取权限列表
       const res = await getRoutes();
       console.log("权限列表", res);
-      const routes = [];
+      const routes: RouteRecordRaw[] = [];
       const permissionTree = res.data;
       permissionTree.forEach((permission: Permission) => {
         const route = permission2Route(permission);
         routes.push(route);
       });
+      this.setRoutes(routes);
+      addAsyncRoutes(routes);
       //
-      function permission2Route(permission: Permission) {
+      function permission2Route(permission: Permission): RouteRecordRaw {
         const route: RouteRecordRaw = {
           name: permission.permissionName,
           path: permission.path,
-          component: () => import("@/views" + permission.component + ".vue"),
+          component: () => import(loadView(permission.component)),
           children: [],
+          meta: {
+            title: permission.permissionName,
+            icon: permission.icon,
+          },
         };
         if (permission.children && permission.children.length > 0) {
           const children = permission.children;
           children.forEach((child) => {
-            // 深度
+            // 深度遍历
             const childRoute = permission2Route(child);
             route.children.push(childRoute);
           });
         }
         return route;
       }
+    },
+  },
+  getters: {
+    hasRoutes(): boolean {
+      return this.menuRoutes.length > 0;
     },
   },
 });

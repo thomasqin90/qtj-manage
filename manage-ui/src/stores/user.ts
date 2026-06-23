@@ -1,17 +1,15 @@
 import { defineStore } from "pinia";
 import type { User } from "@/types/user";
 import { login } from "@/apis/auth";
+import { usePermissionStore } from "@/stores/permission";
 
-const useUserStore = defineStore("user", {
+export const useUserStore = defineStore("user", {
   state: (): {
     userInfo: User | null;
-    token: string;
   } => {
     const userInfoStr = localStorage.getItem("userInfo");
-    const token = localStorage.getItem("token");
     return {
       userInfo: userInfoStr ? JSON.parse(userInfoStr) : null,
-      token: token ?? "",
     };
   },
   actions: {
@@ -19,10 +17,7 @@ const useUserStore = defineStore("user", {
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
       this.userInfo = userInfo;
     },
-    setToken(token: string) {
-      localStorage.setItem("token", token);
-      this.token = token;
-    },
+    // 登录
     async toLogin({
       username,
       password,
@@ -30,14 +25,21 @@ const useUserStore = defineStore("user", {
       username: string;
       password: string;
     }) {
-      // TODO: 登录逻辑
+      // TODO: 登录接口
       const loginRes = await login({ username, password });
       console.log("登录信息", loginRes);
+      this.setUserInfo(loginRes.data);
+      //
+      const permissionStore = usePermissionStore();
+      await permissionStore.generateRoutes();
     },
-    toLogout() {},
+    // 退出登录
+    toLogout() {
+      localStorage.removeItem("userInfo");
+      this.userInfo = null;
+    },
   },
   getters: {
-    getUserInfo: (state) => state.userInfo,
-    getToken: (state) => state.token,
-  },
+    token: (state) => state.userInfo?.token || "",
+  }
 });

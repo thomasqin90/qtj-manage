@@ -34,4 +34,6 @@ public class SysUserVO implements Serializable {
     private Date updateTime;
 
     private List<SysRoleVO> roleList = new ArrayList<>();
+
+    private String token;
 }

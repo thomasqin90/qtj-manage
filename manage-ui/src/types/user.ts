@@ -7,6 +7,7 @@ export interface User {
   phone: string;
   status: number | string;
   roleIdList: string[];
+  token?: string;
 }
 
 export interface UserFilter {

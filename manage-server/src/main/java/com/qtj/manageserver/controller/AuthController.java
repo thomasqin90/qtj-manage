@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController()
+@RestController
 @RequestMapping("/auth")
 public class AuthController {
 
@@ -23,14 +23,22 @@ public class AuthController {
 
     @PostMapping("/login")
     public Result<SysUserVO> login(@RequestBody LoginDTO loginDTO) {
+        // 登录
         SysUserDTO user = sysUserService.login(loginDTO);
         SysUserVO vo = new SysUserVO();
         BeanUtil.copyProperties(user, vo);
         return Result.success(vo);
     }
 
+    /**
+     * 更改密码，登录后使用，从请求头中读取用户ID
+     * @param currentPsd
+     * @param newPsd
+     * @return
+     */
     @PostMapping("/password")
-    public Result<Boolean> changePassword(Long userId, String password) {
+    public Result<Boolean> changePassword(String currentPsd, String newPsd) {
+
         return Result.success(null);
     }
 }

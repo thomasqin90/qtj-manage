@@ -89,24 +89,48 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed } from "vue";
-import TheMenuItem from "@/components/TheMenuItem.vue";
+import { ref, computed, onMounted } from "vue";
+import TheMenuItem from "@/components/TheMenuItem/index.vue";
+import type { Menu } from "@/components/TheMenuItem/types";
 import { useThemeStore } from "@/stores/theme";
+import { usePermissionStore } from "@/stores/permission";
 import { DArrowRight } from "@element-plus/icons-vue";
+import { type RouteRecordRaw } from "vue-router";
 
 const themeStore = useThemeStore();
+const permissionStore = usePermissionStore();
 
 const activeMenu = ref("home");
 // 菜单
-const menuList = ref([
-  {
-    id: 1,
-    name: "用户管理",
-    index: "users",
-    icon: "",
-    children: [],
-  },
-]);
+const menuList = ref<Menu[]>([]);
+
+onMounted(() => {
+  buildMenus(permissionStore.menuRoutes);
+})
+
+function buildMenus(routes: RouteRecordRaw[]) {
+  console.log("buildMenus", routes);
+  routes.forEach((route) => {
+    menuList.value.push(route2Menu(route));
+  })
+  console.log("menuList", menuList.value);
+}
+
+function route2Menu(route: RouteRecordRaw): Menu {
+  const menu = {
+    id: route.path,
+    index: route.path,
+    name: route.meta?.title as string,
+    icon: route.meta?.icon as string,
+    children: [] as Menu[]
+  };
+  if(route.children && route.children.length > 0) {
+    route.children.forEach((child) => {
+      menu.children.push(route2Menu(child));
+    })
+  }
+  return menu;
+}
 
 const avatarUrl = ref("");
 const accountName = ref("用户名");
@@ -197,7 +221,6 @@ const asideWidth = computed(() => {
     --el-main-padding: 10px;
   }
   .router-box {
-
   }
 }
 </style>

@@ -6,6 +6,7 @@ import com.qtj.manageserver.dto.SysPermissionDTO;
 import com.qtj.manageserver.entity.SysPermission;
 import com.qtj.manageserver.service.SysPermissionService;
 import com.qtj.manageserver.vo.SysPermissionVO;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,11 +78,13 @@ public class SysPermissionController {
 
     /**
      * 获取用户的权限信息
-     * @param userId
+     * @param
      * @return
      */
     @GetMapping("routes")
-    public Result<List<SysPermissionVO>> routes(Long userId) {
+    public Result<List<SysPermissionVO>> routes(HttpServletRequest request) {
+        // 从request域取出Long类型用户ID
+        Long userId = (Long) request.getAttribute("loginUserId");
         List<SysPermissionDTO> dto = sysPermissionService.selectTreeByUserId(userId);
         List<SysPermissionVO> vo = dto.stream().map(d -> {
             SysPermissionVO v = new SysPermissionVO();

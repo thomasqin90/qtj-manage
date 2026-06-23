@@ -10,7 +10,9 @@ const request = axios.create({
 request.interceptors.request.use(
   (request) => {
     const userStore = useUserStore();
-    request.headers["Authorization"] = `Bearer ${userStore.token}`;
+    if (userStore.token) {
+      request.headers["Authorization"] = `Bearer ${userStore.token}`;
+    }
     return request;
   },
   (error) => {
@@ -25,8 +27,8 @@ request.interceptors.response.use(
   },
   (error) => {
     console.error("响应拦截器错误", error);
-    if(error.reponse) {
-      if(error.reponse.status === 401) {
+    if (error.reponse) {
+      if (error.reponse.status === 401) {
         // 跳转登录
       } else if (error.reponse.status === 404) {
         // 接口不存在

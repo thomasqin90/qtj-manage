@@ -16,6 +16,8 @@
 </template>
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
+import { useUserStore } from "@/stores/user";
+import router from "@/router";
 
 const formRef = ref();
 
@@ -27,19 +29,25 @@ const model = reactive({
 const rules = reactive({
   username: [
     { required: true, message: "请输入用户名", trigger: "blur" },
-    { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
   ],
   password: [
     { required: true, message: "请输入密码", trigger: "blur" },
-    { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
   ],
 });
 
+const userStore = useUserStore();
+//
 function handleLogin() {
   console.log("登录", model);
-  formRef.value.validate((valid: boolean) => {
+  formRef.value.validate(async (valid: boolean) => {
     if (valid) {
       console.log("验证通过");
+      // 调用登录接口
+      await userStore.toLogin({
+        username: model.username,
+        password: model.password,
+      });
+      router.push("/");
     } else {
       console.log("验证失败");
     }
