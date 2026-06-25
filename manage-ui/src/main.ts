@@ -12,7 +12,8 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 import App from "./App.vue";
 // 引入路由
 import router from "./router";
-// 
+import vHasPermission from "./directives/hasPermission.ts";
+//
 const app = createApp(App);
 // 全局引入element-plus
 app.use(ElementPlus, {
@@ -26,6 +27,8 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   iconList.push(key);
 }
 app.config.globalProperties.$iconList = iconList
+//
+app.directive("hasPermission", vHasPermission);
 // 数据共享
 app.use(createPinia());
 // 安装路由

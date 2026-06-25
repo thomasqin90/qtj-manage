@@ -29,7 +29,7 @@
   <!-- 操作按钮 -->
   <div>
     <!-- 添加 -->
-    <el-button type="primary" icon="Plus" @click="insertUser">添加</el-button>
+    <el-button type="primary" icon="Plus" @click="insertUser" v-hasPermission="'system:user:add'">添加</el-button>
     <!-- 删除 -->
     <el-button type="danger" icon="Delete" @click="delSelectedUsers"
       >删除</el-button

@@ -18,6 +18,7 @@ export const routes: RouteRecordRaw[] = [
         meta: {
           title: "首页",
           icon: "",
+          closable: false,
         },
       },
       {

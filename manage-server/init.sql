@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
     `nickname` VARCHAR(50) DEFAULT NULL COMMENT '昵称',
     `email` VARCHAR(50) DEFAULT NULL COMMENT '邮箱',
     `phone` VARCHAR(20) DEFAULT NULL COMMENT '手机号',
+    `avatar` VARCHAR(255) NOT NULL COMMENT '头像',
     `status` TINYINT NOT NULL DEFAULT 1 COMMENT '状态（0=禁用、1=启用）',
     `is_deleted` TINYINT NOT NULL DEFAULT 0 COMMENT '是否删除（0=未删除、1=已删除）',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -96,8 +97,8 @@ VALUES ('管理员', 'admin', '管理员', 1, 0),
 BEGIN;
 INSERT INTO `sys_permission` (`permission_name`, `permission_code`, `description`, `permission_type`, `parent_id`, `path`, `component`, `icon`, `status`, `is_deleted`)
 VALUES 
-('系统管理', 'system', '系统管理', 1, 0, '/', '', '', 1, 0),
-('用户管理', 'user', '用户管理', 1, 1, '/user', '', '', 1, 0),
-('角色管理', 'role', '角色管理', 1, 1, '/role', '', '', 1, 0),
-('权限管理', 'permission', '权限管理', 1, 1, '/permission', '', '', 1, 0);
+('系统管理', 'system', '系统管理', 1, 0, '/', 'Layout', '', 1, 0),
+('用户管理', 'user', '用户管理', 1, 1, '/user', 'userManage/index', '', 1, 0),
+('角色管理', 'role', '角色管理', 1, 1, '/role', 'roleManage/index', '', 1, 0),
+('权限管理', 'permission', '权限管理', 1, 1, '/permission', 'permissionManage/index', '', 1, 0);
 COMMIT;

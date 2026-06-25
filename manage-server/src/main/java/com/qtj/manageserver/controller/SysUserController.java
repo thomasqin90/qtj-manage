@@ -6,10 +6,15 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.qtj.manageserver.common.Result;
 import com.qtj.manageserver.dto.*;
+import com.qtj.manageserver.service.SysPermissionService;
 import com.qtj.manageserver.service.SysUserService;
+import com.qtj.manageserver.vo.SysPermissionVO;
 import com.qtj.manageserver.vo.SysUserVO;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -17,8 +22,11 @@ public class SysUserController {
 
     private final SysUserService sysUserService;
 
-    public SysUserController(SysUserService sysUserService) {
+    private final SysPermissionService sysPermissionService;
+
+    public SysUserController(SysUserService sysUserService, SysPermissionService sysPermissionService) {
         this.sysUserService = sysUserService;
+        this.sysPermissionService = sysPermissionService;
     }
     // 用户列表
     @GetMapping("/list")
@@ -68,5 +76,29 @@ public class SysUserController {
     public Result<Boolean> delete(@PathVariable Long[] ids) {
         boolean res = sysUserService.deleteUserWithRole(ids);
         return Result.success(res);
+    }
+
+    /**
+     * 获取用户的菜单信息
+     * @param
+     * @return
+     */
+    @GetMapping("routes")
+    public Result<List<SysPermissionVO>> routes(HttpServletRequest request) {
+        // 从request域取出Long类型用户ID
+        Long userId = (Long) request.getAttribute("loginUserId");
+        List<SysPermissionDTO> dto = sysPermissionService.selectTreeByUserId(userId);
+        List<SysPermissionVO> vo = dto.stream().map(d -> {
+            SysPermissionVO v = new SysPermissionVO();
+            BeanUtil.copyProperties(d, v);
+            return v;
+        }).toList();
+        return Result.success(vo);
+    }
+
+    @GetMapping("permissions")
+    public Result<List<String>> permissions(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("loginUserId");
+        return Result.success(null);
     }
 }

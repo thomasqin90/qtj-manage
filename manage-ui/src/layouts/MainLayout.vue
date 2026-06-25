@@ -46,6 +46,7 @@
         </div>
       </el-header>
       <el-container>
+        <!-- 侧边栏：菜单 -->
         <el-aside
           :style="{
             width: asideWidth,
@@ -79,7 +80,9 @@
         <!-- 主页面 -->
         <el-main>
           <!-- 标签容器 -->
-          <div class="tabbar"></div>
+          <div class="tabbar">
+
+          </div>
           <!-- 页面容器 -->
           <div class="router-box">
             <router-view></router-view>

@@ -7,35 +7,30 @@ import type { Permission, PermissionFilter } from "@/types/permission";
  * @returns
  */
 export function getPermissionTree(params?: PermissionFilter) {
-    const url = buildApiUrl("/permission/tree");
-    return request.get(url, {
-        params: {
-            ...params,
-        }
-    });
+  const url = buildApiUrl("/permission/tree");
+  return request.get(url, {
+    params: {
+      ...params,
+    },
+  });
 }
 
 export function getPermissionDetail(id: string) {
-    const url = buildApiUrl(`/permission/${id}`);
-    return request.get(url);
+  const url = buildApiUrl(`/permission/${id}`);
+  return request.get(url);
 }
 
 export function insertPermission(p: Permission) {
-    const url = buildApiUrl("/permission");
-    return request.post(url, p);
+  const url = buildApiUrl("/permission");
+  return request.post(url, p);
 }
 
 export function updatePermission(id: string, p: Permission) {
-    const url = buildApiUrl(`/permission/${id}`);
-    return request.put(url, p);
+  const url = buildApiUrl(`/permission/${id}`);
+  return request.put(url, p);
 }
 
 export function deletePermission(id: string) {
-    const url = buildApiUrl(`/permission/${id}`);
-    return request.delete(url);
-}
-
-export function getRoutes() {
-    const url = buildApiUrl("/permission/routes");
-    return request.get(url);
+  const url = buildApiUrl(`/permission/${id}`);
+  return request.delete(url);
 }

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getRoutes } from "@/apis/permission";
+import { getRoutes } from "@/apis/user";
 import type { Permission } from "@/types/permission";
 import type { RouteRecordRaw } from "vue-router";
 import { addAsyncRoutes } from "@/router";
@@ -9,6 +9,7 @@ export const usePermissionStore = defineStore("permission", {
   state: () => ({
     // 路由
     menuRoutes: [] as RouteRecordRaw[],
+    permissions: [] as string[]
   }),
   actions: {
     setRoutes(routes: RouteRecordRaw[]) {
@@ -51,6 +52,10 @@ export const usePermissionStore = defineStore("permission", {
         return route;
       }
     },
+    // 获取用户的权限
+    async getPermissions() {
+
+    }
   },
   getters: {
     hasRoutes(): boolean {

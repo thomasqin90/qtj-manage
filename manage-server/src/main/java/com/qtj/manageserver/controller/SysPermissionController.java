@@ -75,22 +75,4 @@ public class SysPermissionController {
         boolean res = sysPermissionService.removeByIds(Arrays.asList(ids));
         return Result.success(res);
     }
-
-    /**
-     * 获取用户的权限信息
-     * @param
-     * @return
-     */
-    @GetMapping("routes")
-    public Result<List<SysPermissionVO>> routes(HttpServletRequest request) {
-        // 从request域取出Long类型用户ID
-        Long userId = (Long) request.getAttribute("loginUserId");
-        List<SysPermissionDTO> dto = sysPermissionService.selectTreeByUserId(userId);
-        List<SysPermissionVO> vo = dto.stream().map(d -> {
-            SysPermissionVO v = new SysPermissionVO();
-            BeanUtil.copyProperties(d, v);
-            return v;
-        }).toList();
-        return Result.success(vo);
-    }
 }

@@ -2,18 +2,18 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { RouteLocationNormalized } from "vue-router";
 // 标签
-export interface TagView {
+export interface TabView {
   path: string;
   name?: string;
   title: string;
   fullPath: string;
+  closable: boolean;
 }
 
-export const useTagsViewStore = defineStore("tagsView", () => {
+export const useTabViewStore = defineStore("tabView", () => {
   // 当前可见标签页列表
-  const visitedViews = ref<TagView[]>([]);
-
-  // 添加标签
+  const visitedViews = ref<TabView[]>([]);
+  // 添加标签，通过路由
   const addView = (view: RouteLocationNormalized) => {
     if (!view.meta?.title) return;
     // 防止重复添加
@@ -24,11 +24,12 @@ export const useTagsViewStore = defineStore("tagsView", () => {
       name: view.name as string,
       title: view.meta.title as string,
       fullPath: view.fullPath || view.path,
+      closable: view.meta.closable as boolean ?? true,
     });
   };
 
   // 删除单个标签
-  const delView = (view: TagView) => {
+  const delView = (view: TabView) => {
     const index = visitedViews.value.findIndex((v) => v.path === view.path);
     if (index > -1) {
       visitedViews.value.splice(index, 1);
@@ -41,7 +42,7 @@ export const useTagsViewStore = defineStore("tagsView", () => {
   };
 
   // 删除其他
-  const delOthersViews = (view: TagView) => {
+  const delOthersViews = (view: TabView) => {
     visitedViews.value = visitedViews.value.filter(
       (v) => v.path === view.path || v.path === "/home",
     );

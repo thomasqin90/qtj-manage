@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
-import { useTagsViewStore } from "@/stores/tabsView.ts";
+import { useTabViewStore } from "@/stores/tabView.ts";
 import { useUserStore } from "@/stores/user.ts";
 import { usePermissionStore } from "@/stores/permission.ts";
 import { routes, notFoundRoute } from "./staticRoutes.ts";
@@ -40,7 +40,7 @@ router.beforeEach(async (to, from, next) => {
 // 白名单和登录校验；动态路由获取
 router.afterEach((to) => {
   // 记录当前路由
-  const tagsViewStore = useTagsViewStore();
+  const tagsViewStore = useTabViewStore();
   tagsViewStore.addView(to);
 });
 export function addAsyncRoutes(routes: RouteRecordRaw[]) {
